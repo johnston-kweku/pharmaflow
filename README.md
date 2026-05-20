@@ -42,7 +42,7 @@ PharmaFlow is a modern, responsive, and robust Pharmacy Management System built 
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone "https://github.com/johnston-kweku/pharmaflow.git"
 cd pharmacy-management-system
 ```
 
