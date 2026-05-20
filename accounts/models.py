@@ -46,3 +46,12 @@ class User(AbstractUser):
             ]
         
         return False
+    
+
+class Customer(models.Model):
+    name = models.CharField(max_length=500, blank=True)
+    phone_number = models.CharField(max_length=15, blank=True, unique=True)
+    email = models.EmailField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.name}: {self.phone_number}'

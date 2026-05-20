@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from datetime import timedelta, date
 
 # Create your models here.
 
@@ -12,7 +13,17 @@ class Drug(models.Model):
     inventory = models.PositiveBigIntegerField(default=0)
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
+    def default_expiry():
+        return date.today() + timedelta(days=500) 
+    
+    expiry_date = models.DateField(default=default_expiry)
 
+    def is_expired(self):
+        return self.expiry_date < date.today()
+    
+    def is_expiring_soon(self, days=30):
+        return date.today() <= self.expiry_date <= date.today() + timedelta(days=days)
+    
     def __str__(self):
         desc = self.description[:50] if self.description else ""
         return f"{self.name} {desc}"
