@@ -23,6 +23,7 @@
             {% if request.user.is_admin or request.user.is_manager %}
             <a href="{% url 'inventory:home' %}" class="hover:text-blue-600 transition-colors">Dashboard</a>
             <a href="{% url 'inventory:drug_list' %}" class="hover:text-blue-600 transition-colors">Inventory</a>
+            <a href="{% url 'accounts:customer_list' %}" class="hover:text-blue-600 transition-colors">Customers</a>
             <a href="{% url 'accounts:user_list' %}" class="hover:text-blue-600 transition-colors">Staff</a>
             <a href="{% url 'sales:sales_list' %}" class="hover:text-blue-600 transition-colors">Sales</a>
             {% endif %}

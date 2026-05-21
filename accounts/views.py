@@ -5,10 +5,53 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from .decorators import role_required
-from .forms import UserCreationForm
+from .forms import UserCreationForm, CustomerForm
+from .models import Customer
 
 User = get_user_model()
 # Create your views here.
+
+@login_required
+def customer_list(request):
+    customers = Customer.objects.all().order_by('name')
+    return render(request, 'accounts/customer_list.html', {'customers': customers})
+
+@login_required
+def create_customer(request):
+    if request.method == 'POST':
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Customer created successfully!')
+            return redirect('accounts:customer_list')
+    else:
+        form = CustomerForm()
+    return render(request, 'accounts/create_customer.html', {'form': form})
+
+@login_required
+def update_customer(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Customer updated successfully!')
+            return redirect('accounts:customer_list')
+    else:
+        form = CustomerForm(instance=customer)
+    return render(request, 'accounts/create_customer.html', {
+        'form': form,
+        'title': 'Update Customer'
+    })
+
+@login_required
+@role_required('ADMIN', 'MANAGER')
+def delete_customer(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    customer.delete()
+    messages.success(request, 'Customer deleted successfully!')
+    return redirect('accounts:customer_list')
+
 
 def login_view(request):
     if request.user.is_authenticated:

@@ -46,7 +46,11 @@
                             
                             <!-- Stock Badge -->
                             <div class="flex flex-col items-end">
-                                {% if drug.inventory > 50 %}
+                                {% if drug.is_expired %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-red-50 text-red-600 border border-red-100 uppercase tracking-wider">Expired</span>
+                                {% elif drug.is_expiring_soon %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-red-50 text-red-600 border border-red-100 uppercase tracking-wider">Expiring Soon</span>
+                                {% elif drug.inventory > 50 %}
                                     <span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-green-50 text-green-600 border border-green-100 uppercase tracking-wider">Bulk Available</span>
                                 {% elif drug.inventory > 0 %}
                                     <span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-100 uppercase tracking-wider">Limited Stock</span>

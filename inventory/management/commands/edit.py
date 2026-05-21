@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.apps import apps
-from django.db.models import CharField, TextField, DateField, DateTimeField, IntegerField, DecimalField
+from django.db.models import CharField, TextField, DateField, DateTimeField, PositiveBigIntegerField, DecimalField
 from faker import Faker
 from datetime import timedelta, date
 from random_word import RandomWords
@@ -35,6 +35,8 @@ class Command(BaseCommand):
                 data = date.today() + timedelta(days=margin)
             elif isinstance(field, DecimalField):
                 data = random.randint(-100, 100)
+            elif isinstance(field, PositiveBigIntegerField):
+                data = random.randint(50, 1000)
             setattr(instance, field_name, data)
             instance.save()
             updated +=1

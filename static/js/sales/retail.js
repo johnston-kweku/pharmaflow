@@ -156,6 +156,8 @@ class RetailCart {
         if (this.items.length === 0) return;
 
         const button = document.getElementById('checkout-btn');
+        const customerSelect = document.getElementById('customer-select');
+        const customerId = customerSelect ? customerSelect.value : null;
         const originalText = button.textContent;
         button.disabled = true;
         button.textContent = 'Processing...';
@@ -169,6 +171,7 @@ class RetailCart {
                     'X-CSRFToken': this.getCookie('csrftoken')
                 },
                 body: JSON.stringify({
+                    customer_id: customerId,
                     items: this.items.map(item => ({
                         id: item.id,
                         quantity: item.quantity

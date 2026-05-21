@@ -8,12 +8,15 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.db.models import ProtectedError
 from django.contrib import messages
+from django.http import HttpResponse
 from .models import Drug
 from .forms import DrugForm
 from sales.models import Sale, SaleItem
 from datetime import timedelta
 from accounts.models import User
 from accounts.decorators import role_required
+import csv
+
 
 # Create your views here.
 
@@ -167,3 +170,27 @@ def create_drug(request):
         'form': form,
         'title': 'Add New Drug'
     })
+
+
+def export_inventory_csv(request):
+    response = HttpResponse(content_type='text/csv')
+
+    filename = f"inventory_{timezone.now().strftime('%Y-%m-%d')}.csv"
+
+    response['Content-Disposition'] = f'attachment; filename={filename}'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['Drug Name', 'Wholesale Price', 'Retail Price', 'Stock Level', 'Expiry Date'])
+
+    drugs = Drug.objects.all().order_by('name')
+    for drug in drugs:
+        writer.writerow([
+            drug.name,
+            drug.wholesale_price,
+            drug.retail_price,
+            drug.inventory,
+            drug.expiry_date  
+        ])
+    
+    return response

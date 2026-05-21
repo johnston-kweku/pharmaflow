@@ -7,14 +7,17 @@ from .models import Sale, SaleItem
 from django.contrib.auth.decorators import login_required
 from inventory.models import Drug
 from accounts.decorators import role_required
+from accounts.models import Customer
 
 # Create your views here.
 @login_required
 @role_required('ADMIN', 'MANAGER', 'WHOLESALER')
 def wholesale(request):
     drugs = Drug.objects.filter(inventory__gt=0)
+    customers = Customer.objects.all().order_by('name')
     return render(request, 'sales/wholesaleUI.html', {
-        'drugs':drugs
+        'drugs':drugs,
+        'customers': customers
     })
 
 @login_required
@@ -26,14 +29,20 @@ def process_wholesale_sale(request):
     try:
         data = json.loads(request.body)
         items = data.get('items', [])
+        customer_id = data.get('customer_id')
 
         if not items:
             return JsonResponse({'success': False, 'message': 'No items in cart'}, status=400)
 
         with transaction.atomic():
+            customer = None
+            if customer_id:
+                customer = get_object_or_404(Customer, id=customer_id)
+
             sale = Sale.objects.create(
                 seller=request.user,
-                type=Sale.SaleType.WHOLESALE
+                type=Sale.SaleType.WHOLESALE,
+                customer=customer
             )
 
             for item in items:
@@ -67,8 +76,10 @@ def process_wholesale_sale(request):
 @role_required('ADMIN', 'MANAGER', 'RETAILER')
 def retail(request):
     drugs = Drug.objects.filter(inventory__gt=0)
+    customers = Customer.objects.all().order_by('name')
     return render(request, 'sales/retailUI.html', {
-        'drugs':drugs
+        'drugs':drugs,
+        'customers': customers
     })
 
 @login_required
@@ -80,14 +91,20 @@ def process_retail_sale(request):
     try:
         data = json.loads(request.body)
         items = data.get('items', [])
+        customer_id = data.get('customer_id')
 
         if not items:
             return JsonResponse({'success': False, 'message': 'No items in cart'}, status=400)
 
         with transaction.atomic():
+            customer = None
+            if customer_id:
+                customer = get_object_or_404(Customer, id=customer_id)
+
             sale = Sale.objects.create(
                 seller=request.user,
-                type=Sale.SaleType.RETAIL
+                type=Sale.SaleType.RETAIL,
+                customer=customer
             )
 
             for item in items:
@@ -116,6 +133,9 @@ def process_retail_sale(request):
         return JsonResponse({'success': False, 'message': str(e)}, status=400)
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'Server error: {str(e)}'}, status=500)
+    
+
+    
 @login_required
 @role_required('ADMIN', 'MANAGER')
 def sales_list(request):

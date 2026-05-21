@@ -156,6 +156,7 @@ class WholesaleCart {
         if (this.items.length === 0) return;
 
         const button = document.getElementById('checkout-btn');
+        const customerSelect = document.getElementById('customer-select');
         const originalText = button.textContent;
         button.disabled = true;
         button.textContent = 'Processing...';
@@ -169,6 +170,7 @@ class WholesaleCart {
                     'X-CSRFToken': this.getCookie('csrftoken')
                 },
                 body: JSON.stringify({
+                    customer_id: customerSelect ? customerSelect.value : null,
                     items: this.items.map(item => ({
                         id: item.id,
                         quantity: item.quantity

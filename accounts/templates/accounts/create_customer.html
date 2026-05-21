@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="bg-white shadow-xl rounded-3xl w-full max-w-2xl overflow-hidden">
+    <div class="p-8 border-b border-slate-100 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-black text-slate-800 tracking-tight">{{ title|default:"Add New Customer" }}</h1>
+            <p class="text-slate-500 text-sm font-medium">Enter customer details below</p>
+        </div>
+        <a href="{% url 'accounts:customer_list' %}" class="text-slate-400 hover:text-slate-600 transition-colors">
+            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+        </a>
+    </div>
+
+    <form method="POST" class="p-8 space-y-6">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl text-sm font-medium">
+            Please correct the errors below.
+        </div>
+        {% endif %}
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">Customer Name</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                <p class="text-red-50 text-xs mt-1 font-medium">{{ form.name.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Phone Number</label>
+                    {{ form.phone_number }}
+                    {% if form.phone_number.errors %}
+                    <p class="text-red-50 text-xs mt-1 font-medium">{{ form.phone_number.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Email (Optional)</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <p class="text-red-50 text-xs mt-1 font-medium">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-4">
+            <button type="submit" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-100 active:scale-[0.98]">
+                {{ title|default:"Register Customer" }}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

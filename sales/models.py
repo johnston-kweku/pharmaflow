@@ -47,5 +47,5 @@ class SaleItem(models.Model):
         self.sale.total_cost = self.sale.saleitem_set.aggregate(
             total=Sum('total_cost')
         )['total']
-        self.sale.save()
+        self.sale.save(update_fields=['total_cost'])
 
